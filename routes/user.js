@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
+const isAuth = require('../middleware/isAuth');
 const userController = require('../controllers/user');
 const userValidator = require('../middleware/userValidator');
 
-router.post('/login', userValidator.loginValidator, userController.loginUser);
+router.post('/login', isAuth.isLoggedIn, userValidator.loginValidator, userController.loginUser);
 
-router.post('/sign-up', userValidator.signUpValidator, userController.createUser);
+router.post('/sign-up', isAuth.isLoggedIn, userValidator.signUpValidator, userController.createUser);
 
-router.post('/add-reservation', userController.createReservation);
+router.get('/get-tables', isAuth.notLoggedIn, userController.getTables);
+
+router.post('/add-reservation', isAuth.notLoggedIn, userController.createReservation);
+
+router.get('/logout', isAuth.notLoggedIn, userController.logoutUser);
 
 module.exports = router;
