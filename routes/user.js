@@ -13,6 +13,10 @@ router.get('/get-tables', isAuth.notLoggedIn, userController.getTables);
 
 router.post('/add-reservation', isAuth.notLoggedIn, userController.createReservation);
 
+router.get('/get-reservations', isAuth.notLoggedIn, userController.dispReservations)
+
+router.post('/delete-reservation', isAuth.notLoggedIn, userController.deleteReservation)
+
 router.get('/logout', isAuth.notLoggedIn, userController.logoutUser);
 
 module.exports = router;

@@ -176,8 +176,15 @@ exports.createReservation = (req, res, next) => {
         const reservation = new Reservation({ user_id: new ObjectId(req.user._id), tables: indices, timeslot: req.body.time, date: date, location: req.body.location, cuisine: req.body.cuisine, details: req.body.details })
         reservation.save().then(booking => {
             req.user.bookings.push(new ObjectId(booking._id));
-            return res.json({
-                msg: "Reservation successfully created"
+            req.user.save().then(() => {
+                return res.json({
+                    msg: "Reservation successfully created"
+                })
+            }).catch(err => {
+                return res.json({
+                    err: err.message,
+                    msg: "Saving booking failed"
+                })
             })
         }).catch(err => {
             return res.json({
@@ -192,6 +199,60 @@ exports.createReservation = (req, res, next) => {
         })
     })
 };
+
+exports.dispReservations = (req, res, next) => {
+    Reservation.find({ user_id: req.user._id }).then(reservations => {
+        return res.json({
+            reservations: reservations,
+            msg: "Users reservations fetched"
+        })
+    }).catch(err => {
+        return res.json({
+            err: err.message,
+            msg: "Error occured"
+        })
+    })
+}
+
+exports.deleteReservation = (req, res, next) => {
+    const deleteId = new ObjectId(req.body.res_id)
+    if (req.body.res_id) {
+        Reservation.findById(deleteId).then(res_doc => {
+            if (res_doc === null) {
+                return res.json({
+                    msg: "Reservation with given ID does not exist"
+                })
+            }
+            Reservation.deleteOne({ _id: deleteId }).then(delete_res => {
+                if (delete_res.acknowledged === true) {
+                    req.user.bookings = req.user.bookings.filter(obj => obj.toString() !== deleteId.toString())
+                    req.user.save().then(() => {
+                        Table.updateMany({ $and: [{ index: { $in: res_doc.tables } }, { date: res_doc.date }] }, {
+                            [`slots.${res_doc.timeslot}`]: true
+                        }).then(() => {
+                            return res.json({
+                                msg: "Reservation successfully deleted"
+                            })
+                        })
+                    })
+                } else {
+                    return res.json({
+                        msg: "Deletion failed"
+                    })
+                }
+            })
+        }).catch(err => {
+            return res.json({
+                err: err.message,
+                msg: "Error occured"
+            })
+        })
+    } else {
+        return res.json({
+            msg: "Please provide a reservation ID"
+        })
+    }
+}
 
 exports.logoutUser = (req, res, next) => {
     req.session.destroy(err => {
