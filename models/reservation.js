@@ -8,11 +8,15 @@ const resSchema = new Schema({
         required: true
     },
     tables: {
-        type: [Schema.Types.ObjectId],
+        type: [Number],
         ref: 'tables',
         reqired: true
     },
     timeslot: {
+        type: String,
+        required: true
+    },
+    date: {
         type: Date,
         required: true
     },
@@ -25,7 +29,7 @@ const resSchema = new Schema({
         required: true
     },
     details: {
-        type: String,
+        type: String
     }
 });
 

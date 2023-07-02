@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const tableSchema = new Schema({
     date: {
         type: Date,
-        required: true
+        required: true,
+        unique: false
     },
     num_seats: {
         type: Number,
@@ -17,10 +18,14 @@ const tableSchema = new Schema({
     index: {
         type: Number,
         required: true,
-        unique: true,
-        dropDups: true
+        unqiue: false
     },
-    slots: [{ time: { type: String, required: true }, isAvailable: { type: Boolean, required: true } }]
+    slots: {
+        type: Object,
+        required: true
+    }
 });
+
+tableSchema.index({ date: 1, index: 1 }, { unique: true })
 
 module.exports = mongoose.model('Table', tableSchema)
