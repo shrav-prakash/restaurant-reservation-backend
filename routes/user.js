@@ -17,6 +17,8 @@ router.get('/get-reservations', isAuth.notLoggedIn, userController.dispReservati
 
 router.post('/delete-reservation', isAuth.notLoggedIn, userController.deleteReservation)
 
+router.post('/update-reservation', isAuth.notLoggedIn, userController.updateReservation);
+
 router.get('/logout', isAuth.notLoggedIn, userController.logoutUser);
 
 module.exports = router;
