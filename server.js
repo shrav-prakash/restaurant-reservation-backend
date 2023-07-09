@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const mongoStore = require('connect-mongodb-session')(session);
+const cors = require('cors');
 
 dotenv.config();
 
@@ -13,10 +14,12 @@ const userRoutes = require('./routes/user');
 const User = require('./models/user');
 
 const app = express();
+
 const store = new mongoStore({ uri: process.env.mongoURL, collection: 'sessions' });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: process.env.secret, resave: false, saveUninitialized: false, store: store }));
 
+app.use(cors());
 
 app.use((req, res, next) => {
     if (!req.session.user) {

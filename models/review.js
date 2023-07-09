@@ -11,9 +11,17 @@ const reviewSchema = new Schema({
         type: Number,
         required: true
     },
-    details: {
+    food: {
         type: String,
-        required: true
+    },
+    booking: {
+        type: String,
+    },
+    hospitality: {
+        type: String,
+    },
+    suggestions: {
+        type: String,
     }
 });
 
