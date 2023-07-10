@@ -202,7 +202,6 @@ exports.updateReservation = (req, res, next) => {
             })
         }
         if (res_doc.user_id.toString() !== req.user._id.toString()) {
-            console.log(res_doc.user_id.toString(), req.user._id.toString())
             return res.json({
                 msg: "Cannot modify reservation details of another user"
             })

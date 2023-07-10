@@ -14,7 +14,7 @@ router.post('/sign-up', isAuth.isLoggedIn, userValidator.signUpValidator, userCo
 
 router.get('/get-tables', isAuth.notLoggedIn, userController.getTables);
 
-router.post('/add-reservation', resController.createReservation);
+router.post('/add-reservation', isAuth.notLoggedIn, resController.createReservation);
 
 router.get('/get-reservations', isAuth.notLoggedIn, resController.dispReservations)
 
@@ -22,7 +22,7 @@ router.post('/delete-reservation', isAuth.notLoggedIn, resController.deleteReser
 
 router.post('/update-reservation', isAuth.notLoggedIn, resController.updateReservation);
 
-router.post('/review', isAuth.notLoggedIn, revController.postReview)
+router.post('/review', isAuth.notLoggedIn, revController.postReview);
 
 router.get('/reviews', revController.getReviews);
 

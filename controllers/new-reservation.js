@@ -23,15 +23,12 @@ exports.createReservation = (req, res, next) => {
             }
         }]
     }).then(tablesDetails => {
-        console.log(tablesDetails)
         date.setUTCHours(0, 0, 0, 0)
         if ((tablesDetails.filter(obj => obj.date.toDateString() == date.toDateString())).length > 0) {
             const table = tablesDetails.filter(obj => obj.date.toDateString() == date.toDateString())
             if (table[0].slots[req.body.time]) {
-                console.log(table[0].slots)
                 if (table[0].slots[req.body.time] >= size) {
                     table[0].slots[req.body.time] -= size
-                    console.log(table[0].slots)
                     seatCost = table[0].seatCost
                     Table.findOneAndUpdate({ $and: [{ location: location }, { date: date }] }, { slots: table[0].slots }).then(() => { })
                 } else {
@@ -80,16 +77,13 @@ exports.createReservation = (req, res, next) => {
                     }
                     seatCost = newTable.costPerSeat
                     const table = new Table({ date: date, location: newTable.location, seatCost: newTable.costPerSeat, slots: slots });
-                    console.log(newTable, table)
                     table.save().then(async () => {
                         slots[req.body.time] += parseInt(size);
                         let newDate = new Date();
                         newDate = newDate.setDate(date.getDate() - 1);
                         newDate = new Date(newDate);
                         newDate.setUTCHours(0, 0, 0, 0)
-                        console.log(newDate, currDate)
                         while (newDate >= currDate) {
-                            console.log(tablesDetails, tablesDetails.filter(obj => obj.date.toDateString() == newDate.toDateString()))
                             if (tablesDetails.filter(obj => obj.date.toDateString() == newDate.toDateString()).length === 0) {
                                 const nTable = new Table({ date: newDate, location: newTable.location, seatCost: newTable.costPerSeat, slots: slots })
                                 await nTable.save();
@@ -216,7 +210,6 @@ exports.updateReservation = (req, res, next) => {
             })
         }
         if (res_doc.user_id.toString() !== req.user._id.toString()) {
-            console.log(res_doc.user_id.toString(), req.user._id.toString())
             return res.json({
                 msg: "Cannot modify reservation details of another user"
             })
@@ -247,10 +240,8 @@ exports.updateReservation = (req, res, next) => {
                     })
                 }
                 if (table[0].slots[req.body.time]) {
-                    console.log(table[0].slots)
                     if (table[0].slots[req.body.time] >= size) {
                         table[0].slots[req.body.time] -= size
-                        console.log(table[0].slots)
                         seatCost = table[0].seatCost
                         Table.findOneAndUpdate({ $and: [{ location: location }, { date: date }] }, { slots: table[0].slots }).then(() => { })
                     } else {
@@ -299,7 +290,6 @@ exports.updateReservation = (req, res, next) => {
                         }
                         seatCost = newTable.costPerSeat
                         const table = new Table({ date: date, location: newTable.location, seatCost: newTable.costPerSeat, slots: slots });
-                        console.log(newTable, table)
                         table.save().then(async () => {
                             slots[req.body.time] += parseInt(size);
                             let newDate = new Date();

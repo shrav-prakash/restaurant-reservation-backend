@@ -7,7 +7,7 @@ const { validationResult } = require('express-validator');
 exports.loginUser = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.json({
+        return res.status(400).json({
             errors: errors.array(),
             msg: "Validation Failed"
         })
@@ -15,18 +15,21 @@ exports.loginUser = (req, res, next) => {
     User.findOne({ email: req.body.email }).then(user => {
         bcrypt.compare(req.body.password, user.password).then(result => {
             if (!result) {
-                return res.json({
+                return res.status(400).json({
                     msg: "Incorrect Password"
                 })
             }
             req.session.user = user
             req.session.isLoggedIn = true
-            return res.json({
-                msg: "User successfully logged in"
-            })
+            req.session.save(() => {
+                return res.status(200).json({
+                    msg: "User successfully logged in"
+                })
+            });
+
         })
     }).catch(err => {
-        return res.json({
+        return res.status(400).json({
             err: err.message,
             msg: "Error occured"
         })
@@ -36,7 +39,7 @@ exports.loginUser = (req, res, next) => {
 exports.createUser = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.json({
+        return res.status(400).json({
             errors: errors.array(),
             msg: "Validation Failed"
         })
@@ -47,12 +50,12 @@ exports.createUser = (req, res, next) => {
             password: hashedPw
         })
         newUser.save().then(response => {
-            return res.json({
+            return res.status(200).json({
                 msg: "User Created"
             })
         })
     }).catch(err => {
-        return res.json({
+        return res.status(400).json({
             err: err.message,
             msg: "Creation failed"
         })

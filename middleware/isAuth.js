@@ -1,6 +1,6 @@
 exports.isLoggedIn = (req, res, next) => {
     if (req.session.isLoggedIn) {
-        return res.json({
+        return res.status(400).json({
             msg: "User is already logged in"
         })
     }
