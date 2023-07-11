@@ -15,6 +15,8 @@ const User = require('./models/user');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const store = new mongoStore({ uri: process.env.mongoURL, collection: 'sessions' });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: process.env.secret, resave: false, saveUninitialized: false, store: store, cookie: { secure: false } }));
@@ -26,7 +28,6 @@ app.use(cors({
 
 app.options("*", cors());
 
-app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
     if (!req.session.user) {
