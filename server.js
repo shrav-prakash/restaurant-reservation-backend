@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ secret: process.env.secret, resave: false, saveUninitialized: false, store: store }));
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://restaurant-reservation-app-nkn8.onrender.com/'],
+    origin: ['http://localhost:3000', 'https://restaurant-reservation-app-nkn8.onrender.com'],
     credentials: true
 }));
 
