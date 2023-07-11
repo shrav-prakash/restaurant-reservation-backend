@@ -80,12 +80,12 @@ exports.getTables = (req, res, next) => {
 exports.logoutUser = (req, res, next) => {
     req.session.destroy(err => {
         if (err) {
-            return res.json({
+            return res.status(400).json({
                 err: err.message,
                 msg: "Error Occured"
             })
         }
-        return res.json({
+        return res.status(200).json({
             msg: "User successfully logged out"
         })
     })

@@ -32,13 +32,13 @@ exports.createReservation = (req, res, next) => {
                     seatCost = table[0].seatCost
                     Table.findOneAndUpdate({ $and: [{ location: location }, { date: date }] }, { slots: table[0].slots }).then(() => { })
                 } else {
-                    return res.json({
+                    return res.status(400).json({
                         msg: "Seats are not available for the given time slot"
                     })
                 }
             }
             else {
-                return res.json({
+                return res.status(400).json({
                     msg: "Entered slot doesn't exist"
                 })
             }
@@ -49,7 +49,7 @@ exports.createReservation = (req, res, next) => {
             } else if (location == "Bangalore") {
                 index = 2
             } else {
-                return res.json({
+                return res.status(400).json({
                     msg: "Restaurant not available at the given location"
                 })
             }
@@ -66,12 +66,12 @@ exports.createReservation = (req, res, next) => {
                         if (slots[req.body.time] >= size) {
                             slots[req.body.time] -= size;
                         } else {
-                            return res.json({
+                            return res.status(400).json({
                                 msg: "Seats are not available for the given time slot"
                             })
                         }
                     } else {
-                        return res.json({
+                        return res.status(400).json({
                             msg: "Given timeslot doesn't exist"
                         })
                     }
@@ -95,13 +95,13 @@ exports.createReservation = (req, res, next) => {
                             }
                         }
                     }).catch((err) => {
-                        return res.json({
+                        return res.status(400).json({
                             err: err.message,
                             msg: "Table creation failed"
                         })
                     })
                 } catch (err) {
-                    return res.json({
+                    return res.status(400).json({
                         err: err.message,
                         msg: "Error occured during file read"
                     })
@@ -112,23 +112,23 @@ exports.createReservation = (req, res, next) => {
         reservation.save().then(booking => {
             req.user.bookings.push(new ObjectId(booking._id));
             req.user.save().then(() => {
-                return res.json({
+                return res.status(200).json({
                     msg: "Reservation successfully created"
                 })
             }).catch(err => {
-                return res.json({
+                return res.status(400).json({
                     err: err.message,
                     msg: "Saving booking failed"
                 })
             })
         }).catch(err => {
-            return res.json({
+            return res.status(400).json({
                 err: err.message,
                 msg: "Reservation creation failed"
             })
         })
     }).catch(err => {
-        return res.json({
+        return res.status(400).json({
             err: err.message,
             msg: "Error Occured"
         })
@@ -137,12 +137,12 @@ exports.createReservation = (req, res, next) => {
 
 exports.dispReservations = (req, res, next) => {
     Reservation.find({ user_id: req.user._id }).then(reservations => {
-        return res.json({
+        return res.status(200).json({
             reservations: reservations,
             msg: "Users reservations fetched"
         })
     }).catch(err => {
-        return res.json({
+        return res.status(400).json({
             err: err.message,
             msg: "Error occured"
         })

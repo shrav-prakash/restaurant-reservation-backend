@@ -4,18 +4,18 @@ const ObjectId = require('mongodb').ObjectId
 
 exports.postReview = (req, res, next) => {
     if (req.user.review_id) {
-        return res.json({
+        return res.status(400).json({
             msg: "User has already placed a review"
         })
     }
     const rating = parseInt(req.body.rating)
     if (isNaN(rating)) {
-        return res.json({
+        return res.status(400).json({
             msg: "Rating must be a number"
         })
     }
     if (rating > 5 || rating < 1) {
-        return res.json({
+        return res.status(400).json({
             msg: "Rating must be between 1 to 5"
         })
     }
@@ -24,7 +24,7 @@ exports.postReview = (req, res, next) => {
     review.save().then(rev => {
         req.user.review_id = new ObjectId(rev._id)
         req.user.save().then(() => {
-            return res.json({
+            return res.status(200).json({
                 review: rev,
                 msg: "Review sucessfully placed"
             })
