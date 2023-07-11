@@ -24,6 +24,8 @@ app.use(cors({
     credentials: true
 }));
 
+app.options("*", cors());
+
 app.use((req, res, next) => {
     if (!req.session.user) {
         return next();
